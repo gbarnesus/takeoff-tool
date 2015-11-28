@@ -8,7 +8,7 @@ var contLength = 0;
 var xval = 0;
 var yval = 0;
 var area = 0;
-var scale;
+var scale =1;
 var verticalScale = 1;
 var horizontalScale =  1;
 var image = document.getElementById("source");
@@ -19,9 +19,15 @@ var zoomOut = $(".zoomOut");
 var zoomIncrement = .05;
 var zoomInCount = 0;
 var zoomOutCount = 0;
-
+var undoScale = 1;
+var redoScale = 1;
+var didundoscalerun = false;
 //zoomIn and zoomOut
 zoomIn.off().on("click", function() {
+  if (didundoscalerun == true) {
+ context.scale(redoScale, redoScale);
+ didundoscalerun = false;
+  }
   event.preventDefault();
   verticalScale += zoomIncrement * zoomOutCount;
   horizontalScale += zoomIncrement * zoomOutCount;
@@ -32,8 +38,16 @@ zoomIn.off().on("click", function() {
   callback(image);
   console.log(verticalScale);
   zoomInCount += 1;
+  scale = scale * verticalScale;
+  undoScale = undoScale / verticalScale;
+  redoScale = redoScale * verticalScale;
 });
 zoomOut.off().on("click", function() {
+  if (didundoscalerun == true) {
+ context.scale(redoScale, redoScale);
+ didundoscalerun = false;
+
+  }
   event.preventDefault();
   verticalScale -= zoomIncrement * zoomInCount;
   horizontalScale -= zoomIncrement * zoomInCount;
@@ -44,6 +58,9 @@ zoomOut.off().on("click", function() {
   callback(image);
   console.log(verticalScale);
   zoomOutCount += 1;
+  scale = scale * verticalScale;
+  undoScale = undoScale / verticalScale;
+  redoScale = redoScale * verticalScale;
 });
 
 //drawImage;
@@ -110,7 +127,11 @@ var obj = {
   ycord: y
 }// end of var obj
 user_cord.push(obj);
+if (didundoscalerun == false) {
+context.scale(undoScale, undoScale);
+didundoscalerun = true;}
 context.beginPath();
+
 if (user_cord.length > 1) {
 context.moveTo(user_cord[0].xcord, user_cord[0].ycord);
 context.lineTo(user_cord[1].xcord, user_cord[1].ycord);
@@ -135,6 +156,9 @@ length = 0;
   }// end of var obj
   user_cord.push(obj);
   if (user_cord.length === 1) {
+    if (didundoscalerun == false) {
+    context.scale(undoScale, undoScale);
+    didundoscalerun = true;}
   context.beginPath();
   context.moveTo(x, y);
   x2 = x;
@@ -162,6 +186,9 @@ length = 0;
   }// end of var obj
   user_cord.push(obj);
   if (user_cord.length === 1) {
+    if (didundoscalerun == false) {
+    context.scale(undoScale, undoScale);
+    didundoscalerun = true;}
   context.beginPath();
   context.moveTo(x, y);
   console.log(x, y);
@@ -228,6 +255,9 @@ yval += (user_cord[i].xcord /scale) * (user_cord[y].ycord / scale);
 area = xval - yval;
 };
 area = area / 2;
+if (area < 0){
+  area = area * -1;
+}
 console.log(area);
 xval = 0;
 yval = 0;

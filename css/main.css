@@ -8,6 +8,7 @@
 }
 
 .buttons {
+  position: fixed;
 list-style: none;
 height: 20px;
 margin: 0;
