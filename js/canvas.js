@@ -9,13 +9,49 @@ var xval = 0;
 var yval = 0;
 var area = 0;
 var scale;
-
-///draw image on canvas
+var verticalScale = 1;
+var horizontalScale =  1;
 var image = document.getElementById("source");
+var imageWidth = image.width;
+var imageHeight = image.height;
+var zoomIn = $(".zoomIn");
+var zoomOut = $(".zoomOut");
+var zoomIncrement = .05;
+var zoomInCount = 0;
+var zoomOutCount = 0;
+
+//zoomIn and zoomOut
+zoomIn.off().on("click", function() {
+  event.preventDefault();
+  verticalScale += zoomIncrement * zoomOutCount;
+  horizontalScale += zoomIncrement * zoomOutCount;
+  zoomOutCount = 0;
+  verticalScale += zoomIncrement;
+  horizontalScale += zoomIncrement;
+  context.clearRect(0, 0, image.width, image.height);
+  callback(image);
+  console.log(verticalScale);
+  zoomInCount += 1;
+});
+zoomOut.off().on("click", function() {
+  event.preventDefault();
+  verticalScale -= zoomIncrement * zoomInCount;
+  horizontalScale -= zoomIncrement * zoomInCount;
+  zoomInCount = 0;
+  verticalScale -= zoomIncrement;
+  horizontalScale -= zoomIncrement;
+  context.clearRect(0, 0, image.width, image.height);
+  callback(image);
+  console.log(verticalScale);
+  zoomOutCount += 1;
+});
+
+//drawImage;
 var callback = function(img) {
   if (!img) img = this;
   context.imageSmoothingEnabled = false;
-  context.drawImage(image, 0,0, 1300, 841);
+  context.scale(verticalScale, horizontalScale)
+  context.drawImage(image, 0,0);
 
 }
 if(image.complete){
@@ -39,8 +75,8 @@ var x2
 var y2
 var user_cord = [];
 // set width and height of canvas
-var viewportHeight = 841;
-var viewportWidth = 1300;
+var viewportHeight = imageHeight;
+var viewportWidth = imageWidth;
 $canvas.attr("height", viewportHeight);
 $canvas.attr("width", viewportWidth);
 var image = document.getElementById("source");
@@ -85,6 +121,7 @@ var xs = user_cord[1].xcord - user_cord[0].xcord;
  ys = ys * ys;
  length += Math.sqrt(xs + ys)
 console.log(length / scale);
+length = 0;
  user_cord = [];
 }; //end of if statement to print line and add length
 }/* end of lengthTool*/ else if ($(".contLength").hasClass("selected")) {
