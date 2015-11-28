@@ -1,0 +1,33 @@
+#takeoffCanvas {
+  background-color: #dddddd;
+  ;
+  padding: 0;
+  margin: 0;
+
+
+}
+.buttons {
+list-style: none;
+height: 20px;
+margin: 0;
+padding: 0;
+}
+.buttons li {
+  display: inline-block;
+  background: blue;
+  margin: 0;
+  padding: 0;
+}
+.buttons li a {
+  color: #000000;
+  padding: 0 20px;
+
+}
+.buttons .selected {
+  background: yellow;
+
+}
+#source {
+
+  display: none;
+}
