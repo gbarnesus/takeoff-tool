@@ -6,6 +6,7 @@
 
 
 }
+
 .buttons {
 list-style: none;
 height: 20px;
@@ -27,7 +28,7 @@ padding: 0;
   background: yellow;
 
 }
-#source {
+img {
 
   display: none;
 }
