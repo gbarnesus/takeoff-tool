@@ -13,11 +13,11 @@ var area = 0;
 var xval = 0;
 var yval = 0;
 /// initial scale for canvas
-var scale = 1;
+var scale = .2;
 var isScaleSet = false;
 //// revoling scale
-var verticalScale = 1;
-var horizontalScale =  1;
+var verticalScale = .2;
+var horizontalScale =  .2;
 /// image to display on canvas
 var images = $(".img");
 var imageNum = 0;
@@ -36,8 +36,8 @@ var zoomIncrement = 0.1;
 var zoomInCount = 0;
 var zoomOutCount = 0;
 /// where the scale is vs initial scale value
-var undoScale = 1;
-var redoScale = 1;
+var undoScale = 5;
+var redoScale = .2;
 /// to see if context scale need to be reset or not
 var didundoscalerun = false;
 /// varibles for click cordinates
@@ -54,7 +54,7 @@ colorForm.on("click", function(){
 color = $('input[name="color"]:checked').val();
 })
 ;
-
+$("body").height(imageHeight);
 
 // set canvas width and height
 var setCanvasSize = function(){
@@ -74,8 +74,6 @@ var redrawImage = function(){
   //set values to adjust drawing tools so they dont draw at scaled value
   undoScale = undoScale / verticalScale;
   redoScale = redoScale * verticalScale;
-
-
 }
 var drawNewImage = function(img){
   image = images[imageNum];
@@ -129,27 +127,19 @@ var setToolScale = function() {
   context.scale(undoScale, undoScale);
   didundoscalerun = true;}
 }
-nextPage.on("click", function(){
+nextPage.off().on("click", function(){
   event.preventDefault();
   imageNum += 1;
   drawNewImage();
   disablePageButton();
 
 });
-prevPage.on("click", function(){
+prevPage.off().on("click", function(){
   event.preventDefault();
   imageNum -= 1;
   drawNewImage();
   disablePageButton();
 });
-
-
-
-
-
-
-
-
 //zoomIn and zoomOut
 zoomIn.off().on("click", function() {
   resetIamgeScale();
@@ -159,7 +149,6 @@ zoomIn.off().on("click", function() {
   verticalScale += zoomIncrement;
   horizontalScale += zoomIncrement;
   redrawImage();
-  scale = scale * verticalScale;
 ;
 });
 zoomOut.off().on("click", function() {
@@ -170,6 +159,7 @@ zoomOut.off().on("click", function() {
   verticalScale -= zoomIncrement;
   horizontalScale -= zoomIncrement;
   redrawImage();
+;
 });
 //drawImage on scale;
 var callback = function(img) {
@@ -189,10 +179,16 @@ $button.click(function() {
   event.preventDefault();
   $(".button").removeClass("selected");
 $(this).addClass("selected");
-if ($(this).hasClass("scale")){
+if ($(this).hasClass("notTool")){
 
 } else {
 scaleSet();
+}
+if($(".contLength").hasClass("selected")) {
+event.preventDefault();
+console.log(contLength);
+contLength = 0;
+user_cord = [];
 }
 });
 // lengthTool
@@ -311,7 +307,7 @@ user_cord = [];
 Start Double Click to end area and contuios length tool
 *********************************/
 
-$($canvas).dblclick(function() {
+$($canvas).dblclick (function() {
   if($(".contLength").hasClass("selected")) {
 event.preventDefault();
   console.log(contLength);
