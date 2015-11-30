@@ -13,7 +13,7 @@ var area = 0;
 var xval = 0;
 var yval = 0;
 /// initial scale for canvas
-var scale =1;
+var scale = 1;
 var isScaleSet = false;
 //// revoling scale
 var verticalScale = 1;
@@ -31,7 +31,7 @@ var prevPage = $(".prevPage");
 var zoomIn = $(".zoomIn");
 var zoomOut = $(".zoomOut");
 /// increment for each zoom click
-var zoomIncrement = .1;
+var zoomIncrement = 0.1;
 /// zoom in counter
 var zoomInCount = 0;
 var zoomOutCount = 0;
@@ -46,6 +46,16 @@ var y
 var x2
 var y2
 var user_cord = [];
+// variables for line color
+var colorForm = $(".colors");
+var color = $('input[name="color"]:checked').val();
+// set line color
+colorForm.on("click", function(){
+color = $('input[name="color"]:checked').val();
+})
+;
+
+
 // set canvas width and height
 var setCanvasSize = function(){
   $canvas.attr("height", imageHeight);
@@ -200,10 +210,12 @@ var obj = {
 user_cord.push(obj);
 setToolScale();
 context.beginPath();
+
 //second Click
 if (user_cord.length > 1) {
 context.moveTo(user_cord[0].xcord, user_cord[0].ycord);
 context.lineTo(user_cord[1].xcord, user_cord[1].ycord);
+context.strokeStyle = color;
 context.stroke();
 var xs = user_cord[1].xcord - user_cord[0].xcord;
  xs = xs * xs;
@@ -233,6 +245,7 @@ length = 0;
 
 } else {
   context.lineTo(x,y);
+  context.strokeStyle = color;
   context.stroke();
   var xs = x2 - x;
    xs = xs * xs;
@@ -260,6 +273,7 @@ length = 0;
   } else {
   context.lineTo(x,y);
   console.log(x, y);
+  context.strokeStyle = color;
   context.stroke();
    };
 }
@@ -276,6 +290,7 @@ context.beginPath();
 if (user_cord.length == 2) {
 context.moveTo(user_cord[0].xcord, user_cord[0].ycord);
 context.lineTo(user_cord[1].xcord, user_cord[1].ycord);
+context.strokeStyle = color;
 context.stroke();
 var xs = user_cord[1].xcord - user_cord[0].xcord;
  xs = xs * xs;
@@ -305,9 +320,12 @@ event.preventDefault();
 } else if ($(".areaTool").hasClass("selected")) {
   event.preventDefault();
   context.closePath();
+  context.strokeStyle = color;
   context.stroke();
-  context.fillstyle = "red";
+  context.globalAlpha = 0.2;
+  context.fillStyle = color;
   context.fill();
+  context.globalAlpha = 1;
 var finalcnx = user_cord[0];
 user_cord.push(finalcnx);
 for (i=1; i < user_cord.length; i++) {

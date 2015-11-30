@@ -1,9 +1,21 @@
+body {
+margin: 0;
+padding: 0;
+
+}
+
 #takeoffCanvas {
   background-color: #dddddd;
-  ;
   padding: 0;
   margin: 0;
 
+}
+.menu {
+display: block;
+background: #EEEEEE;
+height: 40px;
+position: fixed;
+width: 100%;
 
 }
 
@@ -13,6 +25,10 @@ list-style: none;
 height: 20px;
 margin: 0;
 padding: 0;
+}
+.colors {
+position: fixed;
+top: 20px;
 }
 .buttons li {
   display: inline-block;
