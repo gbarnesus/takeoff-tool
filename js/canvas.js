@@ -2,74 +2,170 @@
 var context = $("#takeoffCanvas")[0].getContext("2d");
 var $canvas = $("#takeoffCanvas");
 var $window = $(window);
-var $button = $(".button")
+var $button = $(".button");
+/// length for length tool
 var length = 0;
+// length for Cont. Length Tool
 var contLength = 0;
+//// total for area Tool
+var area = 0;
+// variable for calculating area
 var xval = 0;
 var yval = 0;
-var area = 0;
+/// initial scale for canvas
 var scale =1;
+var isScaleSet = false;
+//// revoling scale
 var verticalScale = 1;
 var horizontalScale =  1;
-var image = document.getElementById("source");
+/// image to display on canvas
+var images = $(".img");
+var imageNum = 0;
+var image = images[imageNum];
 var imageWidth = image.width;
 var imageHeight = image.height;
+// next and prevpage selectors
+var nextPage = $(".nextPage");
+var prevPage = $(".prevPage");
+/// zoom in and out selectors
 var zoomIn = $(".zoomIn");
 var zoomOut = $(".zoomOut");
-var zoomIncrement = .05;
+/// increment for each zoom click
+var zoomIncrement = .1;
+/// zoom in counter
 var zoomInCount = 0;
 var zoomOutCount = 0;
+/// where the scale is vs initial scale value
 var undoScale = 1;
 var redoScale = 1;
+/// to see if context scale need to be reset or not
 var didundoscalerun = false;
+/// varibles for click cordinates
+var x
+var y
+var x2
+var y2
+var user_cord = [];
+// set canvas width and height
+var setCanvasSize = function(){
+  $canvas.attr("height", imageHeight);
+  $canvas.attr("width", imageWidth);
+
+}
+setCanvasSize();
+// erase and draw image at new scale
+var redrawImage = function(){
+  ///erase canvas
+  context.clearRect(0, 0, image.width, image.height);
+  //redeaw image on canvas
+  callback(image);
+  //adjust tool scale to new image scale
+  scale = scale * verticalScale;
+  //set values to adjust drawing tools so they dont draw at scaled value
+  undoScale = undoScale / verticalScale;
+  redoScale = redoScale * verticalScale;
+
+
+}
+var drawNewImage = function(img){
+  image = images[imageNum];
+  isScaleSet = false;
+    if (!img) img = this;
+    context.drawImage(image, 0,0);
+  }
+  if(image.complete){
+    callback(image);
+  }
+  else {
+    image.onload = callback;
+  };
+var disablePageButton = function(){
+  if (imageNum == 0){
+  prevPage.hide();
+} else if (imageNum + 1 ==  images.length){
+  nextPage.hide();
+} else {
+  prevPage.show();
+  nextPage.show();
+}
+};
+disablePageButton();
+// set context scale to correct value to keep tool and imagescale allignes
+var resetIamgeScale = function() {
+  if (didundoscalerun == true) {
+ context.scale(redoScale, redoScale);
+ didundoscalerun = false;
+  }
+
+}
+//set scale back to 1
+var resetScaleValues = function() {
+  verticalScale = 1;
+  horizontalScale = 1;
+
+}
+var scaleSet = function() {
+  //notify to set scale
+  if (isScaleSet == false){
+  alert("You need to set scale. Click Scale button to callibrate");
+  };
+  $(".scale").click(function(){
+  alert("Please select two points with known distance");
+
+  });
+}
+var setToolScale = function() {
+  if (didundoscalerun == false) {
+  context.scale(undoScale, undoScale);
+  didundoscalerun = true;}
+}
+nextPage.on("click", function(){
+  event.preventDefault();
+  imageNum += 1;
+  drawNewImage();
+  disablePageButton();
+
+});
+prevPage.on("click", function(){
+  event.preventDefault();
+  imageNum -= 1;
+  drawNewImage();
+  disablePageButton();
+});
+
+
+
+
+
+
+
+
 //zoomIn and zoomOut
 zoomIn.off().on("click", function() {
-  if (didundoscalerun == true) {
- context.scale(redoScale, redoScale);
- didundoscalerun = false;
-  }
+  resetIamgeScale();
   event.preventDefault();
-  verticalScale += zoomIncrement * zoomOutCount;
-  horizontalScale += zoomIncrement * zoomOutCount;
-  zoomOutCount = 0;
+  resetScaleValues();
+  ///zoom by one increment
   verticalScale += zoomIncrement;
   horizontalScale += zoomIncrement;
-  context.clearRect(0, 0, image.width, image.height);
-  callback(image);
-  console.log(verticalScale);
-  zoomInCount += 1;
+  redrawImage();
   scale = scale * verticalScale;
-  undoScale = undoScale / verticalScale;
-  redoScale = redoScale * verticalScale;
+;
 });
 zoomOut.off().on("click", function() {
-  if (didundoscalerun == true) {
- context.scale(redoScale, redoScale);
- didundoscalerun = false;
-
-  }
+  resetIamgeScale();
   event.preventDefault();
-  verticalScale -= zoomIncrement * zoomInCount;
-  horizontalScale -= zoomIncrement * zoomInCount;
-  zoomInCount = 0;
+  resetScaleValues();
+  //zoom by increment
   verticalScale -= zoomIncrement;
   horizontalScale -= zoomIncrement;
-  context.clearRect(0, 0, image.width, image.height);
-  callback(image);
-  console.log(verticalScale);
-  zoomOutCount += 1;
-  scale = scale * verticalScale;
-  undoScale = undoScale / verticalScale;
-  redoScale = redoScale * verticalScale;
+  redrawImage();
 });
-
-//drawImage;
+//drawImage on scale;
 var callback = function(img) {
   if (!img) img = this;
-  context.imageSmoothingEnabled = false;
   context.scale(verticalScale, horizontalScale)
   context.drawImage(image, 0,0);
-
 }
 if(image.complete){
   callback(image);
@@ -81,57 +177,30 @@ else {
 /// selected button
 $button.click(function() {
   event.preventDefault();
-  $("li").removeClass("selected");
+  $(".button").removeClass("selected");
 $(this).addClass("selected");
+if ($(this).hasClass("scale")){
+
+} else {
+scaleSet();
+}
 });
-
-/// varibles for click cordinates
-var x
-var y
-var x2
-var y2
-var user_cord = [];
-// set width and height of canvas
-var viewportHeight = imageHeight;
-var viewportWidth = imageWidth;
-$canvas.attr("height", viewportHeight);
-$canvas.attr("width", viewportWidth);
-var image = document.getElementById("source");
-
-//notify to set scale
-if (scale == null){
-alert("You need to set scale. Click Scale button to callibrate");
-};
-$(".scale").click(function(){
-alert("Please select two points with known distance");
-
-});
-
-
-// when browser is first open
-//resizeCanvas();
-//on window resize
-//$window.resize(function() {
-//resizeCanvas();
-
-//});
-
 // lengthTool
 $canvas.click(function(e) {
 if ($(".lengthTool").hasClass("selected")) {
+  //offset cordinates from canvas instead of document
   var parentOffset = $(this).offset();
    x = e.offsetX;
    y = e.offsetY;
+   //create object from click cordinetes
 var obj = {
   xcord: x,
   ycord: y
 }// end of var obj
 user_cord.push(obj);
-if (didundoscalerun == false) {
-context.scale(undoScale, undoScale);
-didundoscalerun = true;}
+setToolScale();
 context.beginPath();
-
+//second Click
 if (user_cord.length > 1) {
 context.moveTo(user_cord[0].xcord, user_cord[0].ycord);
 context.lineTo(user_cord[1].xcord, user_cord[1].ycord);
@@ -156,9 +225,7 @@ length = 0;
   }// end of var obj
   user_cord.push(obj);
   if (user_cord.length === 1) {
-    if (didundoscalerun == false) {
-    context.scale(undoScale, undoScale);
-    didundoscalerun = true;}
+    setToolScale();
   context.beginPath();
   context.moveTo(x, y);
   x2 = x;
@@ -186,9 +253,7 @@ length = 0;
   }// end of var obj
   user_cord.push(obj);
   if (user_cord.length === 1) {
-    if (didundoscalerun == false) {
-    context.scale(undoScale, undoScale);
-    didundoscalerun = true;}
+  setToolScale();
   context.beginPath();
   context.moveTo(x, y);
   console.log(x, y);
@@ -197,11 +262,6 @@ length = 0;
   console.log(x, y);
   context.stroke();
    };
-
-
-
-
-
 }
 if ($(".scale").hasClass("selected")) {
   var parentOffset = $(this).offset();
@@ -222,18 +282,20 @@ var xs = user_cord[1].xcord - user_cord[0].xcord;
  var ys = user_cord[1].ycord - user_cord[0].ycord;
  ys = ys * ys;
  length += Math.sqrt(xs + ys)
- console.log(length)
 var user_length = prompt("What is the length of that line?")
 user_length = parseInt(user_length);
-scale = length / user_length
-console.log("user_length:" + user_length);
-console.log("length" + length);
-console.log(scale);
+scale = length / user_length;
+isScaleSet = true;
 length = 0;
 user_cord = [];
 }
 }
 });//end of clcik function MAIN
+/********************************
+**********************************
+Start Double Click to end area and contuios length tool
+*********************************/
+
 $($canvas).dblclick(function() {
   if($(".contLength").hasClass("selected")) {
 event.preventDefault();
