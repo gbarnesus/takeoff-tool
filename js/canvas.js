@@ -1,3 +1,4 @@
+$(window).bind("load", function() {
 /// html selectors
 var context = $("#takeoffCanvas")[0].getContext("2d");
 var $canvas = $("#takeoffCanvas");
@@ -55,7 +56,19 @@ color = $('input[name="color"]:checked').val();
 })
 ;
 $("body").height(imageHeight);
-
+//drawImage on scale;
+//functions
+var callback = function(img) {
+  if (!img) img = this;
+  context.scale(verticalScale, horizontalScale)
+  context.drawImage(image, 0,0);
+}
+if(image.complete){
+  callback(image);
+}
+else {
+  image.onload = callback;
+}
 // set canvas width and height
 var setCanvasSize = function(){
   $canvas.attr("height", imageHeight);
@@ -128,68 +141,56 @@ var setToolScale = function() {
   didundoscalerun = true;}
 }
 nextPage.off().on("click", function(){
-  event.preventDefault();
+
   imageNum += 1;
   drawNewImage();
   disablePageButton();
-
+  return false;
 });
 prevPage.off().on("click", function(){
-  event.preventDefault();
   imageNum -= 1;
   drawNewImage();
   disablePageButton();
+  return false;
 });
 //zoomIn and zoomOut
 zoomIn.off().on("click", function() {
   resetIamgeScale();
-  event.preventDefault();
   resetScaleValues();
   ///zoom by one increment
   verticalScale += zoomIncrement;
   horizontalScale += zoomIncrement;
   redrawImage();
+  return false;
 ;
 });
 zoomOut.off().on("click", function() {
   resetIamgeScale();
-  event.preventDefault();
   resetScaleValues();
   //zoom by increment
   verticalScale -= zoomIncrement;
   horizontalScale -= zoomIncrement;
   redrawImage();
-;
+  return false;
 });
-//drawImage on scale;
-var callback = function(img) {
-  if (!img) img = this;
-  context.scale(verticalScale, horizontalScale)
-  context.drawImage(image, 0,0);
-}
-if(image.complete){
-  callback(image);
-}
-else {
-  image.onload = callback;
-}
+
 
 /// selected button
 $button.click(function() {
-  event.preventDefault();
   $(".button").removeClass("selected");
 $(this).addClass("selected");
 if ($(this).hasClass("notTool")){
 
 } else {
 scaleSet();
-}
+};
 if($(".contLength").hasClass("selected")) {
 event.preventDefault();
 console.log(contLength);
 contLength = 0;
 user_cord = [];
-}
+};
+return false;
 });
 // lengthTool
 $canvas.click(function(e) {
@@ -301,6 +302,7 @@ length = 0;
 user_cord = [];
 }
 }
+return false;
 });//end of clcik function MAIN
 /********************************
 **********************************
@@ -340,4 +342,6 @@ yval = 0;
 area = 0;
 user_cord = [];
 }
+return false;
+});
 });
