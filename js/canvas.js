@@ -1,4 +1,4 @@
-$(window).bind("load", function() {
+//add when finsished for firefox $(window).bind("load", function() {
 /// html selectors
 var context = $("#takeoffCanvas")[0].getContext("2d");
 var $canvas = $("#takeoffCanvas");
@@ -6,6 +6,7 @@ var $window = $(window);
 var $button = $(".button");
 /// length for length tool
 var length = 0;
+var lengthHTML = "";
 // length for Cont. Length Tool
 var contLength = 0;
 //// total for area Tool
@@ -42,22 +43,41 @@ var redoScale = .2;
 /// to see if context scale need to be reset or not
 var didundoscalerun = false;
 /// varibles for click cordinates
-var x
-var y
-var x2
-var y2
+var x;
+var y;
+var x2;
+var y2;
 var user_cord = [];
 // variables for line color
 var colorForm = $(".colors");
 var color = $('input[name="color"]:checked').val();
-// set line color
-colorForm.on("click", function(){
-color = $('input[name="color"]:checked').val();
-})
-;
-$("body").height(imageHeight);
+//variables for table
+var dataTable = $(".dataTable");
+var areaTotals = $(".areaTotals");
+var lengthTotals = $(".lengthTotals");
+var lengthTotalsTH =$(".lengthTotalsTH");
+var contLengthTotals = $(".contLengthTotals");
+var totalsTable = $(".totalsTable");
+var lengthCounter = 1;
+var areaTotalsTH = $(".areaTotalsTH");
+var areaCounter = 1;
+var areaHTML = "";
+var contLengthTH = $('.contLengthTH');
+var contLengthCounter = 1;
+var contLengthHTML = "";
+
+//when button is click display or hide
+totalsTable.off().on("click", function() {
+  if (dataTable.css("display") == 'none') {
+    dataTable.show();
+
+  } else {
+    dataTable.hide();
+  };
+});
 //drawImage on scale;
 //functions
+
 var callback = function(img) {
   if (!img) img = this;
   context.scale(verticalScale, horizontalScale)
@@ -124,7 +144,7 @@ var resetScaleValues = function() {
   verticalScale = 1;
   horizontalScale = 1;
 
-}
+};
 var scaleSet = function() {
   //notify to set scale
   if (isScaleSet == false){
@@ -134,12 +154,17 @@ var scaleSet = function() {
   alert("Please select two points with known distance");
 
   });
-}
+};
 var setToolScale = function() {
   if (didundoscalerun == false) {
   context.scale(undoScale, undoScale);
   didundoscalerun = true;}
-}
+};
+// set line color
+colorForm.on("click", function(){
+color = $('input[name="color"]:checked').val();
+});
+$("body").height(imageHeight);
 nextPage.off().on("click", function(){
 
   imageNum += 1;
@@ -185,8 +210,6 @@ if ($(this).hasClass("notTool")){
 scaleSet();
 };
 if($(".contLength").hasClass("selected")) {
-event.preventDefault();
-console.log(contLength);
 contLength = 0;
 user_cord = [];
 };
@@ -218,8 +241,14 @@ var xs = user_cord[1].xcord - user_cord[0].xcord;
  xs = xs * xs;
  var ys = user_cord[1].ycord - user_cord[0].ycord;
  ys = ys * ys;
- length += Math.sqrt(xs + ys)
-console.log(length / scale);
+ length += Math.sqrt(xs + ys);
+ length = length / scale;
+ length = Math.round(length);
+ lengthHTML = "<tr><td>" + length + "</td></tr>";
+ lengthTotals.after(lengthHTML);
+ lengthCounter += 1;
+ lengthTotalsTH.attr("rowspan", lengthCounter);
+
 length = 0;
  user_cord = [];
 }; //end of if statement to print line and add length
@@ -231,15 +260,15 @@ length = 0;
   var obj = {
   xcord: x,
   ycord: y
-  }// end of var obj
+  }
+  // end of var obj
   user_cord.push(obj);
-  if (user_cord.length === 1) {
+  if (user_cord.length == 1) {
     setToolScale();
   context.beginPath();
   context.moveTo(x, y);
   x2 = x;
   y2 = y;
-
 } else {
   context.lineTo(x,y);
   context.strokeStyle = color;
@@ -248,9 +277,10 @@ length = 0;
    xs = xs * xs;
    var ys = y2 - y;
    ys = ys * ys;
-
    contLength += Math.sqrt(xs + ys);
-   console.log(contLength / scale);
+
+   x2 = x;
+   y2 = y;
    };
 
 } else if ($(".areaTool").hasClass("selected")) {
@@ -266,10 +296,8 @@ length = 0;
   setToolScale();
   context.beginPath();
   context.moveTo(x, y);
-  console.log(x, y);
   } else {
   context.lineTo(x,y);
-  console.log(x, y);
   context.strokeStyle = color;
   context.stroke();
    };
@@ -312,7 +340,11 @@ Start Double Click to end area and contuios length tool
 $($canvas).dblclick (function() {
   if($(".contLength").hasClass("selected")) {
 event.preventDefault();
-  console.log(contLength);
+contLength = Math.round(contLength / scale);
+contLengthHTML = "<tr><td>" + contLength + "</td></tr>";
+contLengthTotals.after(contLengthHTML);
+contLengthCounter += 1;
+contLengthTH.attr("rowspan", contLengthCounter);
   contLength = 0;
   user_cord = [];
 } else if ($(".areaTool").hasClass("selected")) {
@@ -336,7 +368,11 @@ area = area / 2;
 if (area < 0){
   area = area * -1;
 }
-console.log(area);
+area = Math.round(area);
+areaHTML = "<tr><td>" + area + "</td></tr>";
+areaTotals.after(areaHTML);
+areaCounter += 1;
+areaTotalsTH.attr("rowspan", areaCounter);
 xval = 0;
 yval = 0;
 area = 0;
@@ -344,4 +380,4 @@ user_cord = [];
 }
 return false;
 });
-});
+///});

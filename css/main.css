@@ -52,3 +52,23 @@ img {
 
   display: none;
 }
+.dataTable {
+  display: none;
+  max-height: 250px;
+  overflow: auto;
+  position: absolute;
+  right: 30px;
+  top: 30px;
+  background-color: #ffffff;
+  border: 1px solid black;
+
+}
+
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}

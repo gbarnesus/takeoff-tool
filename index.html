@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-   <meta charset="UTF-8"> 
+   <meta charset="UTF-8">
   <title>Take off Tool</title>
   <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
@@ -17,6 +17,7 @@
     <li class="zoomOut button notTool"><a href="*">ZoomOut</a></li>
     <li class="prevPage button notTool"><a href="*">Prev PAge</a></li>
     <li class="nextPage button notTool"><a href="*">Next Page</a></li>
+    <li class="totalsTable button notTool"><a href="*"> Show Totals</a></li>
   </ul>
 <form class="colors">
   <input type="radio" name="color" value="blue" checked> Blue
@@ -24,6 +25,24 @@
      <input type="radio" name="color" value="green"> Green
      <input type="radio" name="color" value="red"> Red
   </form>
+  <div class="dataTable">
+    <table>
+  <tr class="areaTotals">
+    <th class="areaTotalsTH" rowspan="1">Area:</th>
+    <th>Totals</th>
+  </tr>
+
+  <tr class="lengthTotals">
+    <th class="lengthTotalsTH" rowspan="1">Length:</th>
+    <th>Totals</th>
+  </t>
+  <tr class="contLengthTotals">
+    <th class="contLengthTH" rowspan="1">Cont. Length:</th>
+    <th>Totals</th>
+  </tr>
+
+</table>
+  </div>
 </div>
   <canvas id="takeoffCanvas" width="0" height="0">
 
