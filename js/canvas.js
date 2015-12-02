@@ -52,22 +52,38 @@ var user_cord = [];
 var colorForm = $(".colors");
 var color = $('input[name="color"]:checked').val();
 //variables for table
+var trareaBlue = $(".areaBlue");
+var trareaYellow = $(".areaYellow");
+var trareaGreen = $(".areaGreen");
+var trareaRed = $(".areaRed");
+var areaBlue = 0;
+var areaYellow = 0;
+var areaGreen = 0;
+var areaRed = 0;
+
+var trlengthBlue = $(".lengthBlue");
+var trlengthYellow = $(".lengthYellow");
+var trlengthGreen = $(".lengthGreen");
+var trlengthRed = $(".lengthRed");
+var lengthBlue = 0;
+var lengthYellow = 0;
+var lengthGreen = 0;
+var lengthRed = 0;
+
+var trclengthBlue = $(".clengthBlue");
+var trclengthYellow = $(".clengthYellow");
+var trclengthGreen = $(".clengthGreen");
+var trclengthRed = $(".clengthRed");
+var clengthBlue = 0;
+var clengthYellow = 0;
+var clengthGreen = 0;
+var clengthRed = 0;
+
 var dataTable = $(".dataTable");
-var areaTotals = $(".areaTotals");
-var lengthTotals = $(".lengthTotals");
-var lengthTotalsTH =$(".lengthTotalsTH");
-var contLengthTotals = $(".contLengthTotals");
-var totalsTable = $(".totalsTable");
-var lengthCounter = 1;
-var areaTotalsTH = $(".areaTotalsTH");
-var areaCounter = 1;
-var areaHTML = "";
-var contLengthTH = $('.contLengthTH');
-var contLengthCounter = 1;
-var contLengthHTML = "";
+var displayTable = $(".totalsTable");
 
 //when button is click display or hide
-totalsTable.off().on("click", function() {
+displayTable.off().on("click", function() {
   if (dataTable.css("display") == 'none') {
     dataTable.show();
 
@@ -75,9 +91,27 @@ totalsTable.off().on("click", function() {
     dataTable.hide();
   };
 });
-//drawImage on scale;
-//functions
 
+//functions
+// set totals to table
+var updateTable = function() {
+  trclengthBlue.text(clengthBlue);
+  trclengthYellow.text(clengthYellow);
+  trclengthGreen.text(clengthGreen);
+  trclengthRed.text(clengthRed);
+
+  trlengthBlue.text(lengthBlue);
+  trlengthYellow.text(lengthYellow);
+  trlengthGreen.text(lengthGreen);
+  trlengthRed.text(lengthRed);
+
+  trareaBlue.text(areaBlue);
+  trareaYellow.text(areaYellow);
+  trareaGreen.text(areaGreen);
+  trareaRed.text(areaRed);
+}
+updateTable();
+//drawImage on scale;
 var callback = function(img) {
   if (!img) img = this;
   context.scale(verticalScale, horizontalScale)
@@ -150,11 +184,9 @@ var scaleSet = function() {
   if (isScaleSet == false){
   alert("You need to set scale. Click Scale button to callibrate");
   };
-  $(".scale").click(function(){
-  alert("Please select two points with known distance");
-
-  });
 };
+
+
 var setToolScale = function() {
   if (didundoscalerun == false) {
   context.scale(undoScale, undoScale);
@@ -201,18 +233,21 @@ zoomOut.off().on("click", function() {
 
 
 /// selected button
-$button.click(function() {
+$button.on("click", function() {
   $(".button").removeClass("selected");
 $(this).addClass("selected");
 if ($(this).hasClass("notTool")){
-
-} else {
+$(this).removeClass("selected");
+} else if ($(this).hasClass("scale")){
+  alert("please click two point with know distance");
+} else{
 scaleSet();
 };
 if($(".contLength").hasClass("selected")) {
 contLength = 0;
 user_cord = [];
 };
+
 return false;
 });
 // lengthTool
@@ -244,10 +279,17 @@ var xs = user_cord[1].xcord - user_cord[0].xcord;
  length += Math.sqrt(xs + ys);
  length = length / scale;
  length = Math.round(length);
- lengthHTML = "<tr><td>" + length + "</td></tr>";
- lengthTotals.after(lengthHTML);
- lengthCounter += 1;
- lengthTotalsTH.attr("rowspan", lengthCounter);
+ if (color == "blue"){
+   lengthBlue += length;
+ } else if (color == "yellow") {
+   lengthYellow += length;
+ } else if (color == "green") {
+   lengthGreen += length;
+ } else if (color == "red"){
+   lengthRed += length;
+ };
+ updateTable();
+
 
 length = 0;
  user_cord = [];
@@ -341,10 +383,16 @@ $($canvas).dblclick (function() {
   if($(".contLength").hasClass("selected")) {
 event.preventDefault();
 contLength = Math.round(contLength / scale);
-contLengthHTML = "<tr><td>" + contLength + "</td></tr>";
-contLengthTotals.after(contLengthHTML);
-contLengthCounter += 1;
-contLengthTH.attr("rowspan", contLengthCounter);
+if (color == "blue"){
+  clengthBlue += contLength;
+} else if (color == "yellow") {
+  clengthYellow += contLength;
+} else if (color == "green") {
+  clengthGreen += contLength;
+} else if (color == "red"){
+  clengthRed += contLength;
+};
+updateTable();
   contLength = 0;
   user_cord = [];
 } else if ($(".areaTool").hasClass("selected")) {
@@ -369,10 +417,16 @@ if (area < 0){
   area = area * -1;
 }
 area = Math.round(area);
-areaHTML = "<tr><td>" + area + "</td></tr>";
-areaTotals.after(areaHTML);
-areaCounter += 1;
-areaTotalsTH.attr("rowspan", areaCounter);
+if (color == "blue"){
+  areaBlue += area;
+} else if (color == "yellow") {
+  areaYellow += area;
+} else if (color == "green") {
+  areaGreen += area;
+} else if (color == "red"){
+  areaRed += area;
+};
+updateTable();
 xval = 0;
 yval = 0;
 area = 0;
